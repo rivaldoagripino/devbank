@@ -28,9 +28,10 @@ class Transactions(models.Model):
         ('DEBIT', 'DEBIT'),
         ('CREDIT', 'CREDIT')
     )
-    datetime = models.DateTimeField(auto_now_add=True, editable=False)
+    datetime = models.DateField(auto_now_add=True, editable=False)
     value = models.DecimalField(max_digits=6, decimal_places=2)
-    type = models.CharField(max_length=6, choices=type_transaction_choices)
+    log_extract = models.DecimalField(max_digits=20, decimal_places=2, editable=False)
+    type = models.CharField(max_length=6, choices=type_transaction_choices, editable=False)
     description = models.TextField(max_length=155)
     account = models.ForeignKey(UserAccount, related_name='transactions', on_delete=models.DO_NOTHING)
 
