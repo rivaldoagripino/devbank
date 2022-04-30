@@ -30,7 +30,10 @@
 
 Para começarmos, certifique-se de seguir os passos a seguir:
 * Clonagem do repositório.
-* Acessar pasta de clonagem e rodar os comandos: 
+* Acessar pasta de clonagem e rodar os comandos:
+* python3 venv venv 
+* LINUX: source venv/bin/activate
+* WINDOWS: venv/Scripts/Activate
 * pip install -r requirements.txt
 * python manage.py makemigrations
 * python manage.py migrate 
