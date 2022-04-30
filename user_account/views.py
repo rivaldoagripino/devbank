@@ -1,10 +1,11 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from django.contrib.auth.hashers import make_password, check_password
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.permissions import IsAdminUser
-from .models import UserAccount, Transactions
+from rest_framework.permissions import IsAdminUser, AllowAny
+from .models import UserAccount, Transactions, User
 from django.http.response import JsonResponse
-from typing import Optional
+import random
 
 
 class AddMoneyView(APIView):
@@ -91,3 +92,32 @@ class ExtractView(APIView):
             data = Transactions.objects.filter(account=account, datetime__range=[initial, final], type=type)
             return self.response_object(data)
             
+
+class RegisterUserView(APIView):
+    permission_classes = [AllowAny]
+
+    def encrypt_password(self, password):
+        old_pass = password
+        encrypted_password = make_password(password=old_pass, salt=None, hasher='pbkdf2_sha256')
+        verify = check_password(password=old_pass, encoded=encrypted_password)
+        if verify:
+            return encrypted_password
+        else:
+            return False
+
+    def post(self, request):
+        data = request.data
+        try:
+            User.objects.get(email = data['email'])
+            return Response({'msg': 'User already registered'})
+        except :
+            useraccounts = UserAccount.objects.all()
+            account = User.objects.create_user(**data)
+            UserAccount.objects.create(
+                user = account,
+                number = len(useraccounts) + 1,
+                agency = random.randrange(1,10),
+                balance = 0,
+            )
+
+            return Response({'msg': 'User registered successfully'})

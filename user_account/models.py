@@ -37,5 +37,3 @@ class Transactions(models.Model):
 
     def __str__(self) -> str:
         return self.account.__str__()
-        
-        
