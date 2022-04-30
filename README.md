@@ -31,12 +31,8 @@
 Para começarmos, certifique-se de seguir os passos a seguir:
 * Clonagem do repositório.
 * Acessar pasta de clonagem e rodar os comandos:
-* python3 venv venv 
-* LINUX: source venv/bin/activate
-* WINDOWS: venv/Scripts/Activate
-* pip install -r requirements.txt
-* python manage.py makemigrations
-* python manage.py migrate 
+* LINUX: sudo docker-compose up --build (1ª Vez, posteriores retirar o "--build")
+* WINDOWS: docker-compose up --build (1ª Vez, posteriores retirar o "--build")
 
 
 ## :globe_with_meridians: Rotas criadas:
@@ -52,6 +48,3 @@ Para começarmos, certifique-se de seguir os passos a seguir:
 * http://admin.localhost:8000/api/extract/date&date/type -> FILTRAR POR DATA E TIPO **necesário token (Bearer)
 
 ## OBS: COLLECTIONS POSTMAN NA RAIZ DO PROJETO
-
-
-
