@@ -31,6 +31,7 @@
 Para começarmos, certifique-se de seguir os passos a seguir:
 * Clonagem do repositório.
 * Acessar pasta de clonagem e rodar os comandos:
+* Renomear arquivo .env_example para .env
 * LINUX: sudo docker-compose up --build (1ª Vez, posteriores retirar o "--build")
 * WINDOWS: docker-compose up --build (1ª Vez, posteriores retirar o "--build")
 
