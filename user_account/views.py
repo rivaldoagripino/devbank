@@ -10,7 +10,7 @@ import random
 
 class AddMoneyView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         account = UserAccount.objects.get(user=request.user)
@@ -30,7 +30,7 @@ class AddMoneyView(APIView):
 
 class RemoveMoneyView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         account = UserAccount.objects.get(user=request.user)
@@ -52,7 +52,7 @@ class RemoveMoneyView(APIView):
 
 class ExtractView(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAdminUser]
+    permission_classes = [AllowAny]
 
     def response_object(self, data):
         data_format = [
@@ -64,14 +64,20 @@ class ExtractView(APIView):
             }
             for transaction in data
         ]
-        initial_balance = data[0].log_extract
-        final_balance = data[len(data_format)-1].log_extract
-        payload = {
-            "Initial_balance": initial_balance,
-            "Final_balance": final_balance,
-            "Extract": data_format
-        }
-        return JsonResponse(payload, safe=False)
+        if len(data) > 0:
+            initial_balance = data[0].log_extract
+            final_balance = data[len(data_format)-1].log_extract
+            payload = {
+                "Initial_balance": initial_balance,
+                "Final_balance": final_balance,
+                "Extract": data_format
+            }
+            return JsonResponse(payload, safe=False)
+        else:
+            payload = {
+                "Extract": data_format
+            }
+            return JsonResponse(payload, safe=False)
 
     def get(self, request, initial=None, final=None, type=None):
         account = UserAccount.objects.get(user=request.user)
@@ -80,18 +86,21 @@ class ExtractView(APIView):
             data = Transactions.objects.filter(account=account)
             return self.response_object(data)
 
-        elif type and initial==None and final==None:
-            data = Transactions.objects.filter(account=account, type=type)
-            return self.response_object(data)
 
         elif type==None and initial and final:
             data = Transactions.objects.filter(account=account, datetime__range=[initial, final])
             return self.response_object(data)
 
-        elif type and initial and final:
-            data = Transactions.objects.filter(account=account, datetime__range=[initial, final], type=type)
-            return self.response_object(data)
+        if type == "DEBIT" or type == "CREDIT":
+            if initial==None and final==None:
+                data = Transactions.objects.filter(account=account, type=type)
+                return self.response_object(data)
+
+            elif initial and final:
+                data = Transactions.objects.filter(account=account, datetime__range=[initial, final], type=type)
+                return self.response_object(data)
             
+        return Response({'msg': 'Dado não encontrado'})
 
 class RegisterUserView(APIView):
     permission_classes = [AllowAny]
